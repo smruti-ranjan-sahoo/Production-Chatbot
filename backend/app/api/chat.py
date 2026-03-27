@@ -20,15 +20,21 @@ router = APIRouter()
 service = AgentService()
 
 class ChatRequest(BaseModel):
+    user_id: str
+    conversation_id: str
     message: str
     usecase: UsecaseEnum
-    model: ModelEnum   # 👈 NEW
+    model: ModelEnum
 
 @router.post("/chat")
 def chat(req: ChatRequest):
+
     response = service.run(
+        user_id=req.user_id,
+        conversation_id=req.conversation_id,
         message=req.message,
-        usecase=req.usecase.value,   # 👈 FIX
-        model_name=req.model.value  
+        usecase=req.usecase.value,
+        model_name=req.model.value
     )
+
     return {"response": response}
