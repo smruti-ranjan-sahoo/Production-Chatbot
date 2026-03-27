@@ -10,19 +10,25 @@ class ModelEnum(str, Enum):
     GPT_OSS = "openai/gpt-oss-120b"
     LLAMA_SCOUT = "meta-llama/llama-4-scout-17b-16e-instruct"
     LLAMA_VISION = "llama-3.2-11b-vision-preview"
+
+class UsecaseEnum(str, Enum):
+    BASIC = "Basic Chatbot"
+    ADVANCED = "Advanced Chatbot"
+    MULTI_AGENT = "Multi-Agent Chatbot"
+    DOCUMENT_QA = "Document QA"
 router = APIRouter()
 service = AgentService()
 
 class ChatRequest(BaseModel):
     message: str
-    usecase: str
+    usecase: UsecaseEnum
     model: ModelEnum   # 👈 NEW
 
 @router.post("/chat")
 def chat(req: ChatRequest):
     response = service.run(
         message=req.message,
-        usecase=req.usecase,
-        model_name=req.model
+        usecase=req.usecase.value,   # 👈 FIX
+        model_name=req.model.value  
     )
     return {"response": response}

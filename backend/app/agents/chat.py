@@ -1,20 +1,24 @@
 from typing import Dict, Any, List, Optional
 import base64
-import imghdr
 from langchain_core.messages import SystemMessage, HumanMessage, AIMessage, BaseMessage
 from app.core.state import State
-
+import filetype
 
 def guess_mime_from_bytes(data: bytes) -> str:
-    kind = imghdr.what(None, data)
-    if kind == "png":
+    kind = filetype.guess(data)
+
+    if kind is None:
         return "image/png"
-    if kind in ("jpg", "jpeg"):
+
+    if kind.mime == "image/png":
+        return "image/png"
+    elif kind.mime in ["image/jpeg"]:
         return "image/jpeg"
-    if kind == "gif":
+    elif kind.mime == "image/gif":
         return "image/gif"
-    if kind == "webp":
+    elif kind.mime == "image/webp":
         return "image/webp"
+
     return "image/png"
 
 
